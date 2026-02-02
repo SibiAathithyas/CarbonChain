@@ -34,9 +34,17 @@ const Index = () => {
       const res = await fetch(BACKEND_URL);
       const json = await res.json();
 
-      let status: AirStatus = "normal";
-      if (json.gas > 400 || json.dust > 300) status = "critical";
-      else if (json.gas > 250 || json.dust > 200) status = "warning";
+      let status: "normal" | "warning" | "critical" = "normal";
+      // Safe demo thresholds based on observed behavior
+      if (json.gas >= 380 || json.dust >= 300) {
+      status = "critical";
+      } else if (json.gas >= 300 || json.dust >= 220) {
+        status = "warning";
+      } else {
+        status = "normal";
+}
+
+
 
       setData({
         gas: json.gas,
