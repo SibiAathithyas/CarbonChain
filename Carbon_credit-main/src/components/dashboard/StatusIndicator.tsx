@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
 
-type StatusType = "normal" | "warning" | "violation";
+type StatusType = "normal" | "warning" | "critical";
 
 interface StatusIndicatorProps {
-  status: StatusType;
+  status?: StatusType;
   className?: string;
 }
 
@@ -24,18 +24,21 @@ const statusConfig = {
     textClass: "text-warning",
     dotClass: "bg-warning",
   },
-  violation: {
-    label: "Violation",
-    description: "Threshold exceeded",
+  critical: {
+    label: "Critical",
+    description: "Emission limit exceeded",
     bgClass: "bg-destructive/20",
     borderClass: "border-destructive/50",
     textClass: "text-destructive",
     dotClass: "bg-destructive",
   },
-};
+} as const;
 
-export const StatusIndicator = ({ status, className }: StatusIndicatorProps) => {
-  const config = statusConfig[status];
+export const StatusIndicator = ({
+  status = "normal",
+  className,
+}: StatusIndicatorProps) => {
+  const config = statusConfig[status] ?? statusConfig.normal;
 
   return (
     <div
@@ -55,11 +58,14 @@ export const StatusIndicator = ({ status, className }: StatusIndicatorProps) => 
           )}
         />
       </div>
+
       <div>
         <p className={cn("font-semibold text-sm", config.textClass)}>
           {config.label}
         </p>
-        <p className="text-xs text-muted-foreground">{config.description}</p>
+        <p className="text-xs text-muted-foreground">
+          {config.description}
+        </p>
       </div>
     </div>
   );
